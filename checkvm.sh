@@ -35,7 +35,7 @@ cloudmonkey list virtualmachines state=Stopped details=stats |grep "^count"
 
 
 function vm_ip() {
-cloudmonkey list virtualmachines  details=stats,nics filter=displayname,ipaddress
+cloudmonkey list virtualmachines  details=stats,nics filter=name,displayname,ipaddress
 }
 
 function count() {
@@ -71,19 +71,28 @@ case $OPTARG in
 esac
 }
 
+
+
 function select_id() {
-cloudmonkey list virtualmachines details=stats,nics $OPTARG filter=displayname,ipaddress
+cloudmonkey list virtualmachines details=stats,nics $OPTARG filter=name,displayname,ipaddress
 }
+
+function select_id_from_name() {
+echo $OPTARG\'s ID is `cloudmonkey list virtualmachines details=stats  $OPTARG filter=id`
+}
+
+
 if [ $# = 0 ]
 then
 
 echo "Useage: `basename $0` -c  all_vm | all_vm_up | all_vm_down \n \
 	           -l  vm_ip \n \
-	           -s  \"id=xxxxxx\" "
+	           -s  \"id=xxxxxx\"|\"name=xxx\" 
+	           -n  \"name=xxxxxx\" "
 			exit 1 
 fi
 
-while getopts "c:l:s:" arg
+while getopts "c:l:s:n:" arg
 do
 	case $arg in
 		c)
@@ -95,8 +104,14 @@ do
 		s)
 			select_id
 			;;
+		n)
+			select_id_from_name
+			;;
 		?)
-			echo "Useage: `basename $0` -c all_vm | all_vm_up | all_vm_down \n                 -l vm_ip \n                  -s \"id=xxxxxx\" "
+		echo "Useage: `basename $0` -c  all_vm | all_vm_up | all_vm_down \n \
+	           -l  vm_ip \n \
+	           -s  \"id=xxxxxx\" 
+	           -n  \"name=xxxxxx\" "
 			exit 1 
 			;;
 	esac
