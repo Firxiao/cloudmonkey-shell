@@ -24,7 +24,7 @@ $BIN list virtualmachines filter=id|grep id|awk '{print $3}' > /tmp/id.temp
 
 while read line
 do
-$BIN start virtualmachine id=$line
+$BIN start virtualmachine id=$line &
 done < /tmp/id.temp
 
 
